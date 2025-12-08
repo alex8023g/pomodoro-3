@@ -1,26 +1,29 @@
 import type { Dispatch, SetStateAction } from 'react';
-import type { State } from '../App';
+import type { Durations, Mode, State, TimeStartEnd } from '../App';
 
 type Props = {
   state: State;
   setState: Dispatch<SetStateAction<State>>;
   setProgress: Dispatch<SetStateAction<number>>;
+  setTimeStartEnd: Dispatch<SetStateAction<TimeStartEnd>>;
+  currentMode: Mode;
+  setCurrentMode: Dispatch<SetStateAction<Mode>>;
+  durations: Durations;
 };
 
 export function Footer({
-  // isSettingsOpen,
-  // setIsSettingsOpen,
-  // isTimerOn,
-  // setIsTimerOn,
-  // isReset,
-  // setIsReset,
   state,
   setState,
   setProgress,
+  setTimeStartEnd,
+  currentMode,
+  setCurrentMode,
+  durations,
 }: Props) {
   return (
     <footer className='/border flex h-30 items-center justify-center bg-[url(/footer_frame.png)] bg-cover bg-center'>
       <div className='relative flex w-full items-center justify-between px-10'>
+        {/* Reset (home) button */}
         <button
           onClick={() => {
             if (!state.isReset) {
@@ -30,6 +33,11 @@ export function Footer({
                 isSettingsOpen: false,
               });
               setProgress(0);
+              setTimeStartEnd({
+                timeStart: null,
+                timeEnd: null,
+              });
+              setCurrentMode('pomodoro');
             }
           }}
         >
@@ -41,10 +49,24 @@ export function Footer({
             )}
           </div>
         </button>
+        {/* TimerOn button */}
         <button
           className='relative bottom-10 -left-1.5'
           onClick={() => {
             if (!state.isTimerOn) {
+              const timeStamp = Date.now();
+              let timeEnd = 0;
+              if (currentMode === 'pomodoro') {
+                timeEnd = timeStamp + durations.pom * 60 * 1000;
+              } else if (currentMode === 'short_break') {
+                timeEnd = timeStamp + durations.short * 60 * 1000;
+              } else if (currentMode === 'long_break') {
+                timeEnd = timeStamp + durations.long * 60 * 1000;
+              }
+              setTimeStartEnd({
+                timeStart: timeStamp,
+                timeEnd: timeEnd,
+              });
               setState({
                 isReset: false,
                 isTimerOn: true,
@@ -65,6 +87,7 @@ export function Footer({
             <img src='/timer_off_btn.png' alt='play button' />
           )}
         </button>
+        {/* Settings button */}
         <button
           onClick={() => {
             if (!state.isSettingsOpen) {

@@ -11,16 +11,6 @@ export function ModeNav({ currentMode, setCurrentMode }: Props) {
   return (
     <div className='absolute right-0 bottom-10 left-0 flex justify-between px-3 font-[aclonica]'>
       <button
-        className={
-          currentMode === 'pomodoro'
-            ? 'text-[20px] text-[#020f55]'
-            : 'text-[15px] text-[rgba(0,0,0,0.3)]'
-        }
-        onClick={() => setCurrentMode('pomodoro')}
-      >
-        pomodoro
-      </button>
-      <button
         onClick={() => setCurrentMode('short_break')}
         className={twJoin(
           currentMode === 'short_break'
@@ -29,6 +19,16 @@ export function ModeNav({ currentMode, setCurrentMode }: Props) {
         )}
       >
         short break
+      </button>
+      <button
+        className={
+          currentMode === 'pomodoro'
+            ? 'text-[20px] text-[#020f55]'
+            : 'text-[15px] text-[rgba(0,0,0,0.3)]'
+        }
+        onClick={() => setCurrentMode('pomodoro')}
+      >
+        pomodoro
       </button>
       <button
         className={
