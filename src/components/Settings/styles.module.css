@@ -1,0 +1,40 @@
+.settingsFrame {
+  width: 325px;
+  height: 396px;
+  border-radius: 50px;
+  padding: 40px 0;
+  background: rgba(2, 15, 85, 0.25);
+  box-shadow: 5px 5px 50px 0 rgba(0, 0, 0, 0.25);
+}
+
+.settingsTitle {
+  color: #fff;
+  font-family: Aclonica;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.timeTitle {
+  margin-bottom: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  font-family: Aclonica;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: 0.9px;
+}
+
+.settingName {
+  width: 50%;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  font-family: Aclonica;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
