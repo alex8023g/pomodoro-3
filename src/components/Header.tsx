@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from 'react';
-import { deviceStorage } from '../deviceStorage';
+import { deviceStorage } from '../storages/deviceStorage';
 
 export function Header({
   isRepeatOn,

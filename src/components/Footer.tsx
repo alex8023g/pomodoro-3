@@ -1,28 +1,31 @@
-import type { Dispatch, SetStateAction } from 'react';
-import type { Durations, Mode, State, TimeStartEnd } from '../types';
-import { deviceStorage } from '../deviceStorage';
+import type { Dispatch, RefObject, SetStateAction } from 'react';
+import type { Durations, Mode, ScheduleItem, State } from '../types/types';
+import { deviceStorage } from '../storages/deviceStorage';
 import { createSchedule } from '../lib/createSchedule';
+import { defaultState } from '../constants';
 
 type Props = {
   state: State;
   setState: Dispatch<SetStateAction<State>>;
   setProgress: Dispatch<SetStateAction<number>>;
-  setTimeStartEnd: Dispatch<SetStateAction<TimeStartEnd>>;
+  setCurrentTimeEnd: Dispatch<SetStateAction<number | null>>;
   currentMode: Mode;
   setCurrentMode: Dispatch<SetStateAction<Mode>>;
   durations: Durations;
+  isRepeatOn: boolean;
+  scheduleRef: RefObject<ScheduleItem[]>;
 };
-
-const isRepeatOnDevStorage = await deviceStorage.getIsRepeatOn();
 
 export function Footer({
   state,
   setState,
   setProgress,
-  setTimeStartEnd,
-  currentMode,
+  setCurrentTimeEnd,
+  // currentMode,
   setCurrentMode,
   durations,
+  isRepeatOn,
+  scheduleRef,
 }: Props) {
   return (
     <footer className='/border flex h-30 items-center justify-center bg-[url(/footer_frame.png)] bg-cover bg-center'>
@@ -37,11 +40,9 @@ export function Footer({
                 isSettingsOpen: false,
               });
               setProgress(0);
-              setTimeStartEnd({
-                timeStart: null,
-                timeEnd: null,
-              });
+              setCurrentTimeEnd(null);
               setCurrentMode('pomodoro');
+              deviceStorage.setState(defaultState);
             }
           }}
         >
@@ -58,33 +59,27 @@ export function Footer({
           className='relative bottom-10 -left-1.5'
           onClick={() => {
             if (!state.isTimerOn) {
-              const timeStamp = Date.now();
-              let timeEnd = 0;
-              if (currentMode === 'pomodoro') {
-                timeEnd = timeStamp + durations.pom * 60 * 1000;
-              } else if (currentMode === 'short_break') {
-                timeEnd = timeStamp + durations.short * 60 * 1000;
-              } else if (currentMode === 'long_break') {
-                timeEnd = timeStamp + durations.long * 60 * 1000;
-              }
-              setTimeStartEnd({
-                timeStart: timeStamp,
-                timeEnd: timeEnd,
-              });
               setState({
                 isReset: false,
                 isTimerOn: true,
                 isSettingsOpen: false,
               });
+              deviceStorage.setState({
+                isReset: false,
+                isTimerOn: true,
+                isSettingsOpen: false,
+              });
               if (state.isReset) {
-                const schedule = createSchedule({
-                  isRepeatOn: isRepeatOnDevStorage,
+                const scheduleRes = createSchedule({
+                  isRepeatOn: isRepeatOn,
                   durations: durations,
                 });
-                deviceStorage.setSchedule(schedule);
+                deviceStorage.setSchedule(scheduleRes);
+                scheduleRef.current = scheduleRes;
                 console.log(
                   '🚀 ~ Footer ~ schedule:',
-                  schedule.map((item) => ({
+                  scheduleRes,
+                  scheduleRes.map((item) => ({
                     timeEnd: new Date(item.timeEnd).toISOString(),
                     mode: item.mode,
                   })),

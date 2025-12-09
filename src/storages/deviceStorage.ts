@@ -1,7 +1,7 @@
 import { Preferences } from '@capacitor/preferences';
-import type { Durations } from './types';
-import { defaultDurations } from './constants';
-import type { ScheduleItem } from './types';
+import type { Durations, State } from '../types/types';
+import { defaultDurations, defaultState } from '../constants';
+import type { ScheduleItem } from '../types/types';
 
 export const deviceStorage = {
   setIsRepeatOn: async (isRepeatOn: boolean) => {
@@ -64,14 +64,43 @@ export const deviceStorage = {
   },
 
   getSchedule: async (): Promise<ScheduleItem[]> => {
-    const ret = await Preferences.get({ key: 'schedule' });
-    if (!ret.value) {
+    const res = await Preferences.get({ key: 'schedule' });
+    if (!res.value) {
       await Preferences.set({
         key: 'schedule',
         value: JSON.stringify([]),
       });
       return [];
     }
-    return JSON.parse(ret.value);
+    const schedule = JSON.parse(res.value);
+    const actualSchedule = schedule.filter(
+      (item: ScheduleItem) => item.timeEnd > Date.now(),
+    );
+    if (actualSchedule.length > schedule.length) {
+      Preferences.set({
+        key: 'schedule',
+        value: JSON.stringify(actualSchedule),
+      });
+    }
+    return actualSchedule;
+  },
+
+  setState: async (state: State) => {
+    await Preferences.set({
+      key: 'state',
+      value: JSON.stringify(state),
+    });
+  },
+
+  getState: async (): Promise<State> => {
+    const res = await Preferences.get({ key: 'state' });
+    if (!res.value) {
+      await Preferences.set({
+        key: 'state',
+        value: JSON.stringify(defaultState),
+      });
+      return defaultState;
+    }
+    return JSON.parse(res.value);
   },
 };

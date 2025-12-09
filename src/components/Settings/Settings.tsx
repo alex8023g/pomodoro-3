@@ -1,4 +1,4 @@
-import type { State } from '../../App';
+import type { State } from '../../types/types';
 import { SelectDuration } from '../SelectDuration';
 import styles from './styles.module.css';
 import type { Dispatch, SetStateAction } from 'react';

@@ -1,6 +1,6 @@
 import { twJoin } from 'tailwind-merge';
 import type { Dispatch, SetStateAction } from 'react';
-import type { Mode } from '../App';
+import type { Mode } from '../types/types';
 
 type Props = {
   currentMode: Mode;

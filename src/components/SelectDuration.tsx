@@ -1,7 +1,7 @@
 import { ChevronDownIcon } from '@heroicons/react/16/solid';
 import type { Dispatch, SetStateAction } from 'react';
-import { deviceStorage } from '../deviceStorage';
-import type { Durations } from '../App';
+import { deviceStorage } from '../storages/deviceStorage';
+import type { Durations } from '../types/types';
 
 type Props = {
   values: number[];

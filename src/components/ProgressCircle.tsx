@@ -1,98 +1,74 @@
-import { useEffect, useRef, type Dispatch, type SetStateAction } from 'react';
-import type { Durations, Mode, State, TimeStartEnd } from '../types';
+import {
+  useEffect,
+  useRef,
+  type Dispatch,
+  type RefObject,
+  type SetStateAction,
+} from 'react';
+import type { Durations, Mode, ScheduleItem, State } from '../types/types';
 
 type Props = {
   state: State;
   progress: number;
   setProgress: Dispatch<SetStateAction<number>>;
-  timeStartEnd: TimeStartEnd;
-  setTimeStartEnd: Dispatch<SetStateAction<TimeStartEnd>>;
   currentMode: Mode;
   setCurrentMode: Dispatch<SetStateAction<Mode>>;
   durations: Durations;
   isRepeatOn: boolean;
   setState: Dispatch<SetStateAction<State>>;
+  scheduleRef: RefObject<ScheduleItem[]>;
+  setCurrentTimeEnd: Dispatch<SetStateAction<number | null>>;
 };
 
 export function ProgressCircle({
   state,
   progress,
   setProgress,
-  timeStartEnd,
-  setTimeStartEnd,
   currentMode,
   setCurrentMode,
   durations,
   isRepeatOn,
   setState,
+  scheduleRef,
+  setCurrentTimeEnd,
 }: Props) {
   const interval = useRef<number | null>(null);
-  const isPomodoroFirst = useRef(true);
 
   const fullProgress = 749;
 
   useEffect(() => {
     let progressStep = 0;
-    if (timeStartEnd.timeEnd && timeStartEnd.timeStart) {
-      progressStep =
-        fullProgress / ((timeStartEnd.timeEnd - timeStartEnd.timeStart) / 1000);
+    if (scheduleRef.current[0]?.duration) {
+      progressStep = fullProgress / (scheduleRef.current[0].duration / 1000);
     }
     console.log('🚀 ~ progressStep:', progressStep);
     if (state.isTimerOn) {
       interval.current = setInterval(() => {
+        console.log('🚀 ~ scheduleRef.current', scheduleRef.current);
         if (progress >= fullProgress) {
-          if (currentMode === 'pomodoro') {
-            if (isPomodoroFirst.current) {
-              isPomodoroFirst.current = false;
-              setCurrentMode('short_break');
-              setTimeStartEnd({
-                timeStart: Date.now(),
-                timeEnd: Date.now() + durations.short * 60 * 1000,
-              });
-            } else {
-              isPomodoroFirst.current = true;
-              setCurrentMode('long_break');
-              setTimeStartEnd({
-                timeStart: Date.now(),
-                timeEnd: Date.now() + durations.long * 60 * 1000,
-              });
-            }
+          if (scheduleRef.current.length === 1 && interval.current) {
+            clearInterval(interval.current);
+            interval.current = null;
             setProgress(0);
-          } else if (currentMode === 'short_break') {
-            setCurrentMode('pomodoro');
-            setTimeStartEnd({
-              timeStart: Date.now(),
-              timeEnd: Date.now() + durations.pom * 60 * 1000,
+            setState({
+              isReset: true,
+              isTimerOn: false,
+              isSettingsOpen: false,
             });
-            setProgress(0);
-          } else if (currentMode === 'long_break') {
             setCurrentMode('pomodoro');
-            if (isRepeatOn) {
-              setProgress(0);
-              setTimeStartEnd({
-                timeStart: Date.now(),
-                timeEnd: Date.now() + durations.pom * 60 * 1000,
-              });
-            } else {
-              setTimeStartEnd({
-                timeStart: null,
-                timeEnd: null,
-              });
-              setProgress(0);
-              setState({
-                isReset: true,
-                isTimerOn: false,
-                isSettingsOpen: false,
-              });
-              clearInterval(interval.current as number);
-            }
+          } else {
+            scheduleRef.current.shift();
+            setCurrentMode(scheduleRef.current[0].mode);
+
+            setCurrentTimeEnd(scheduleRef.current[0]?.timeEnd || null);
+            setProgress(0);
           }
         } else {
-          // setProgress((prev) => prev + progressStep);
-          if (timeStartEnd.timeEnd) {
+          if (scheduleRef.current[0]?.timeEnd) {
             setProgress(
               fullProgress -
-                ((timeStartEnd.timeEnd - Date.now()) / 1000) * progressStep,
+                ((scheduleRef.current[0].timeEnd - Date.now()) / 1000) *
+                  progressStep,
             );
           }
         }
@@ -112,10 +88,10 @@ export function ProgressCircle({
     setCurrentMode,
     isRepeatOn,
     setState,
-    timeStartEnd,
     durations,
     fullProgress,
-    setTimeStartEnd,
+    setCurrentTimeEnd,
+    scheduleRef,
   ]);
 
   const radius = 120;

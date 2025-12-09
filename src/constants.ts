@@ -3,3 +3,9 @@ export const defaultDurations = {
   short: 1,
   long: 2,
 };
+
+export const defaultState = {
+  isSettingsOpen: false,
+  isTimerOn: false,
+  isReset: true,
+};
