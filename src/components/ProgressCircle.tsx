@@ -1,5 +1,5 @@
 import { useEffect, useRef, type Dispatch, type SetStateAction } from 'react';
-import type { Durations, Mode, State, TimeStartEnd } from '../App';
+import type { Durations, Mode, State, TimeStartEnd } from '../types';
 
 type Props = {
   state: State;
@@ -88,7 +88,13 @@ export function ProgressCircle({
             }
           }
         } else {
-          setProgress((prev) => prev + progressStep);
+          // setProgress((prev) => prev + progressStep);
+          if (timeStartEnd.timeEnd) {
+            setProgress(
+              fullProgress -
+                ((timeStartEnd.timeEnd - Date.now()) / 1000) * progressStep,
+            );
+          }
         }
       }, 1000);
       return () => clearInterval(interval.current as number);

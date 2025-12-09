@@ -1,5 +1,7 @@
 import { ChevronDownIcon } from '@heroicons/react/16/solid';
 import type { Dispatch, SetStateAction } from 'react';
+import { deviceStorage } from '../deviceStorage';
+import type { Durations } from '../App';
 
 type Props = {
   values: number[];
@@ -7,7 +9,7 @@ type Props = {
   setDuration: Dispatch<
     SetStateAction<{ pom: number; short: number; long: number }>
   >;
-  durationsKey: string;
+  durationsKey: keyof Durations;
 };
 
 export function SelectDuration({
@@ -33,6 +35,11 @@ export function SelectDuration({
               ...prev,
               [durationsKey]: Number(e.target.value),
             }));
+
+            deviceStorage.updateDurations({
+              duration: Number(e.target.value),
+              durationsKey,
+            });
           }}
         >
           {values.map((value) => (

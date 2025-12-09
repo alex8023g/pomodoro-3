@@ -1,6 +1,6 @@
 import styles from './styles.module.css';
 import { ProgressCircle } from '../ProgressCircle';
-import type { Durations, Mode, State, TimeStartEnd } from '../../App';
+import type { Durations, Mode, State, TimeStartEnd } from '../../types';
 import type { Dispatch, SetStateAction } from 'react';
 import { twJoin } from 'tailwind-merge';
 

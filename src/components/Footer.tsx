@@ -1,5 +1,7 @@
 import type { Dispatch, SetStateAction } from 'react';
-import type { Durations, Mode, State, TimeStartEnd } from '../App';
+import type { Durations, Mode, State, TimeStartEnd } from '../types';
+import { deviceStorage } from '../deviceStorage';
+import { createSchedule } from '../lib/createSchedule';
 
 type Props = {
   state: State;
@@ -10,6 +12,8 @@ type Props = {
   setCurrentMode: Dispatch<SetStateAction<Mode>>;
   durations: Durations;
 };
+
+const isRepeatOnDevStorage = await deviceStorage.getIsRepeatOn();
 
 export function Footer({
   state,
@@ -72,6 +76,20 @@ export function Footer({
                 isTimerOn: true,
                 isSettingsOpen: false,
               });
+              if (state.isReset) {
+                const schedule = createSchedule({
+                  isRepeatOn: isRepeatOnDevStorage,
+                  durations: durations,
+                });
+                deviceStorage.setSchedule(schedule);
+                console.log(
+                  '🚀 ~ Footer ~ schedule:',
+                  schedule.map((item) => ({
+                    timeEnd: new Date(item.timeEnd).toISOString(),
+                    mode: item.mode,
+                  })),
+                );
+              }
             } else {
               setState({
                 isReset: false,

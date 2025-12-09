@@ -5,39 +5,21 @@ import { useState } from 'react';
 import { Header } from './components/Header';
 import { Settings } from './components/Settings/Settings';
 import { ModeNav } from './components/ModeNav';
+import { deviceStorage } from './deviceStorage';
+import type { Durations, Mode, TimeStartEnd } from './types';
 
-export type Mode = 'pomodoro' | 'short_break' | 'long_break';
-
-export type State = {
-  isSettingsOpen: boolean;
-  isTimerOn: boolean;
-  isReset: boolean;
-};
-
-export type TimeStartEnd = {
-  timeStart: number | null;
-  timeEnd: number | null;
-};
-
-export type Durations = {
-  pom: number;
-  short: number;
-  long: number;
-};
+const isRepeatOnDevStorage = await deviceStorage.getIsRepeatOn();
+const durationsDevStorage = await deviceStorage.getDurations();
 
 function App() {
   const [currentMode, setCurrentMode] = useState<Mode>('pomodoro');
-  const [isRepeatOn, setIsRepeatOn] = useState(false);
+  const [isRepeatOn, setIsRepeatOn] = useState<boolean>(isRepeatOnDevStorage);
   const [progress, setProgress] = useState(0);
   const [timeStartEnd, setTimeStartEnd] = useState<TimeStartEnd>({
     timeStart: null,
     timeEnd: null,
   });
-  const [durations, setDurations] = useState<Durations>({
-    pom: 3,
-    short: 1,
-    long: 2,
-  });
+  const [durations, setDurations] = useState<Durations>(durationsDevStorage);
   const [state, setState] = useState({
     isSettingsOpen: false,
     isTimerOn: false,
