@@ -1,11 +1,14 @@
 import {
   useEffect,
-  useRef,
+  // useRef,
   type Dispatch,
   type RefObject,
   type SetStateAction,
 } from 'react';
 import type { Durations, Mode, ScheduleItem, State } from '../types/types';
+import { App } from '@capacitor/app';
+
+let interval: number | null = null;
 
 type Props = {
   state: State;
@@ -32,23 +35,44 @@ export function ProgressCircle({
   scheduleRef,
   setCurrentTimeEnd,
 }: Props) {
-  const interval = useRef<number | null>(null);
+  // const interval = useRef<number | null>(null);
 
   const fullProgress = 749;
 
   useEffect(() => {
+    console.log('🚀 ~ useEffect start');
     let progressStep = 0;
     if (scheduleRef.current[0]?.duration) {
+      console.log('🚀 ~ 1');
       progressStep = fullProgress / (scheduleRef.current[0].duration / 1000);
     }
-    console.log('🚀 ~ progressStep:', progressStep);
+    // console.log('🚀 ~ progressStep:', progressStep);
     if (state.isTimerOn) {
-      interval.current = setInterval(() => {
-        console.log('🚀 ~ scheduleRef.current', scheduleRef.current);
-        if (progress >= fullProgress) {
-          if (scheduleRef.current.length === 1 && interval.current) {
-            clearInterval(interval.current);
-            interval.current = null;
+      console.log('🚀 ~ 2');
+      interval = setInterval(async () => {
+        console.log('🚀 ~ 2.1');
+        // console.log('🚀 ~ scheduleRef.current', scheduleRef.current);
+        if (progress < fullProgress) {
+          console.log('🚀 ~ 3');
+          if (scheduleRef.current[0]?.timeEnd) {
+            console.log('🚀 ~ 4');
+            const { isActive } = await App.getState();
+            if (isActive) {
+              console.log('🚀 ~ 5');
+              setProgress(
+                fullProgress -
+                  ((scheduleRef.current[0].timeEnd - Date.now()) / 1000) *
+                    progressStep,
+              );
+            }
+          }
+        } else {
+          console.log('🚀 ~ 6');
+          if (scheduleRef.current.length === 1 && interval) {
+            console.log('🚀 ~ 7');
+            clearInterval(interval);
+            interval = null;
+            console.log('🚀 ~ 7.1');
             setProgress(0);
             setState({
               isReset: true,
@@ -57,29 +81,29 @@ export function ProgressCircle({
             });
             setCurrentMode('pomodoro');
           } else {
+            console.log('🚀 ~ 8');
             scheduleRef.current.shift();
             setCurrentMode(scheduleRef.current[0].mode);
-
             setCurrentTimeEnd(scheduleRef.current[0]?.timeEnd || null);
             setProgress(0);
           }
-        } else {
-          if (scheduleRef.current[0]?.timeEnd) {
-            setProgress(
-              fullProgress -
-                ((scheduleRef.current[0].timeEnd - Date.now()) / 1000) *
-                  progressStep,
-            );
-          }
         }
       }, 1000);
-      return () => clearInterval(interval.current as number);
+      console.log('🚀 ~ 9');
     } else {
-      if (interval.current) {
-        clearInterval(interval.current);
-        interval.current = null;
+      console.log('🚀 ~ 10');
+      setState({
+        isReset: true,
+        isTimerOn: false,
+        isSettingsOpen: false,
+      });
+      if (interval) {
+        console.log('🚀 ~ 11');
+        clearInterval(interval);
+        interval = null;
       }
     }
+    return () => clearInterval(interval as number);
   }, [
     state.isTimerOn,
     setProgress,

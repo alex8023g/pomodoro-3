@@ -3,6 +3,7 @@ import type { Durations, Mode, ScheduleItem, State } from '../types/types';
 import { deviceStorage } from '../storages/deviceStorage';
 import { createSchedule } from '../lib/createSchedule';
 import { defaultState } from '../constants';
+import { scheduleBasicNotification } from '../lib/localNotifications';
 
 type Props = {
   state: State;
@@ -84,13 +85,11 @@ export function Footer({
                     mode: item.mode,
                   })),
                 );
+
+                scheduleBasicNotification({
+                  schedule: scheduleRes,
+                });
               }
-            } else {
-              setState({
-                isReset: false,
-                isTimerOn: false,
-                isSettingsOpen: false,
-              });
             }
           }}
         >

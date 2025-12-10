@@ -51,9 +51,7 @@ function App() {
           currentTimeEnd={currentTimeEnd}
           setCurrentTimeEnd={setCurrentTimeEnd}
         />
-        {!state.isSettingsOpen && (
-          <ModeNav currentMode={currentMode} setCurrentMode={setCurrentMode} />
-        )}
+        {!state.isSettingsOpen && <ModeNav currentMode={currentMode} />}
       </div>
       <Footer
         state={state}
