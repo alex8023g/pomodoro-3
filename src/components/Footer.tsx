@@ -3,7 +3,10 @@ import type { Durations, Mode, ScheduleItem, State } from '../types/types';
 import { deviceStorage } from '../storages/deviceStorage';
 import { createSchedule } from '../lib/createSchedule';
 import { defaultState } from '../constants';
-import { scheduleBasicNotification } from '../lib/localNotifications';
+import {
+  cancelAllNotifications,
+  scheduleBasicNotification,
+} from '../lib/localNotifications';
 
 type Props = {
   state: State;
@@ -45,6 +48,7 @@ export function Footer({
               setCurrentMode('pomodoro');
               deviceStorage.setState(defaultState);
             }
+            cancelAllNotifications();
           }}
         >
           <div className='/border'>

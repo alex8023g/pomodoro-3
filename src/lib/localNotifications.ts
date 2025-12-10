@@ -58,3 +58,16 @@ LocalNotifications.addListener(
     console.log('Notification details:', notificationAction.notification);
   },
 );
+
+// 4. Cancel all notifications
+export async function cancelAllNotifications() {
+  const pending = await LocalNotifications.getPending();
+  console.log('🚀 ~ cancelAllNotifications ~ pending:', pending);
+  if (pending.notifications.length > 0) {
+    await LocalNotifications.cancel({
+      notifications: pending.notifications.map((notification) => ({
+        id: notification.id,
+      })),
+    });
+  }
+}
