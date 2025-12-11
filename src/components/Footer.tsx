@@ -1,26 +1,40 @@
-import type { Dispatch, SetStateAction } from 'react';
-import type { State } from '../App';
+import type { Dispatch, RefObject, SetStateAction } from 'react';
+import type { Durations, Mode, ScheduleItem, State } from '../types/types';
+import { deviceStorage } from '../storages/deviceStorage';
+import { createSchedule } from '../lib/createSchedule';
+import { defaultState } from '../constants';
+import {
+  cancelAllNotifications,
+  scheduleBasicNotification,
+} from '../lib/localNotifications';
 
 type Props = {
   state: State;
   setState: Dispatch<SetStateAction<State>>;
   setProgress: Dispatch<SetStateAction<number>>;
+  setCurrentTimeEnd: Dispatch<SetStateAction<number | null>>;
+  currentMode: Mode;
+  setCurrentMode: Dispatch<SetStateAction<Mode>>;
+  durations: Durations;
+  isRepeatOn: boolean;
+  scheduleRef: RefObject<ScheduleItem[]>;
 };
 
 export function Footer({
-  // isSettingsOpen,
-  // setIsSettingsOpen,
-  // isTimerOn,
-  // setIsTimerOn,
-  // isReset,
-  // setIsReset,
   state,
   setState,
   setProgress,
+  setCurrentTimeEnd,
+  // currentMode,
+  setCurrentMode,
+  durations,
+  isRepeatOn,
+  scheduleRef,
 }: Props) {
   return (
     <footer className='/border flex h-30 items-center justify-center bg-[url(/footer_frame.png)] bg-cover bg-center'>
       <div className='relative flex w-full items-center justify-between px-10'>
+        {/* Reset (home) button */}
         <button
           onClick={() => {
             if (!state.isReset) {
@@ -30,7 +44,11 @@ export function Footer({
                 isSettingsOpen: false,
               });
               setProgress(0);
+              setCurrentTimeEnd(null);
+              setCurrentMode('pomodoro');
+              deviceStorage.setState(defaultState);
             }
+            cancelAllNotifications();
           }}
         >
           <div className='/border'>
@@ -41,6 +59,7 @@ export function Footer({
             )}
           </div>
         </button>
+        {/* TimerOn button */}
         <button
           className='relative bottom-10 -left-1.5'
           onClick={() => {
@@ -50,12 +69,31 @@ export function Footer({
                 isTimerOn: true,
                 isSettingsOpen: false,
               });
-            } else {
-              setState({
+              deviceStorage.setState({
                 isReset: false,
-                isTimerOn: false,
+                isTimerOn: true,
                 isSettingsOpen: false,
               });
+              if (state.isReset) {
+                const scheduleRes = createSchedule({
+                  isRepeatOn: isRepeatOn,
+                  durations: durations,
+                });
+                deviceStorage.setSchedule(scheduleRes);
+                scheduleRef.current = scheduleRes;
+                console.log(
+                  '🚀 ~ Footer ~ schedule:',
+                  scheduleRes,
+                  scheduleRes.map((item) => ({
+                    timeEnd: new Date(item.timeEnd).toISOString(),
+                    mode: item.mode,
+                  })),
+                );
+
+                scheduleBasicNotification({
+                  schedule: scheduleRes,
+                });
+              }
             }
           }}
         >
@@ -65,6 +103,7 @@ export function Footer({
             <img src='/timer_off_btn.png' alt='play button' />
           )}
         </button>
+        {/* Settings button */}
         <button
           onClick={() => {
             if (!state.isSettingsOpen) {

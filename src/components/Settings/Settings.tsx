@@ -1,4 +1,4 @@
-import type { State } from '../../App';
+import type { State } from '../../types/types';
 import { SelectDuration } from '../SelectDuration';
 import styles from './styles.module.css';
 import type { Dispatch, SetStateAction } from 'react';
@@ -33,7 +33,7 @@ export function Settings({ state, setState, durations, setDurations }: Props) {
               <div className={styles.settingName}>pomodoro</div>
               <div className='w-1/2 text-center'>
                 <SelectDuration
-                  values={[25, 30, 35, 40]}
+                  values={[25, 30, 35, 40, 45]}
                   duration={durations.pom}
                   setDuration={setDurations}
                   durationsKey='pom'
