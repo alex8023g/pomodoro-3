@@ -5,8 +5,11 @@ import {
   type RefObject,
   type SetStateAction,
 } from 'react';
-import type { Durations, Mode, ScheduleItem, State } from '../types/types';
+import type { Mode, ScheduleItem, State } from '../types/types';
 import { App } from '@capacitor/app';
+import { defaultState } from '../constants';
+import { deviceStorage } from '../storages/deviceStorage';
+import { circleProgressHandler } from '../lib/cercleProgress';
 
 let interval: number | null = null;
 
@@ -16,7 +19,7 @@ type Props = {
   setProgress: Dispatch<SetStateAction<number>>;
   currentMode: Mode;
   setCurrentMode: Dispatch<SetStateAction<Mode>>;
-  durations: Durations;
+  // durations: Durations;
   isRepeatOn: boolean;
   setState: Dispatch<SetStateAction<State>>;
   scheduleRef: RefObject<ScheduleItem[]>;
@@ -29,7 +32,7 @@ export function ProgressCircle({
   setProgress,
   currentMode,
   setCurrentMode,
-  durations,
+  // durations,
   isRepeatOn,
   setState,
   scheduleRef,
@@ -49,60 +52,49 @@ export function ProgressCircle({
     // console.log('🚀 ~ progressStep:', progressStep);
     if (state.isTimerOn) {
       console.log('🚀 ~ 2');
-      interval = setInterval(async () => {
-        console.log('🚀 ~ 2.1');
-        // console.log('🚀 ~ scheduleRef.current', scheduleRef.current);
-        if (progress < fullProgress) {
-          console.log('🚀 ~ 3');
-          if (scheduleRef.current[0]?.timeEnd) {
-            console.log('🚀 ~ 4');
-            const { isActive } = await App.getState();
-            if (isActive) {
-              console.log('🚀 ~ 5');
-              setProgress(
-                fullProgress -
-                  ((scheduleRef.current[0].timeEnd - Date.now()) / 1000) *
-                    progressStep,
-              );
-            }
-          }
-        } else {
-          console.log('🚀 ~ 6');
-          if (scheduleRef.current.length === 1 && interval) {
-            console.log('🚀 ~ 7');
-            clearInterval(interval);
-            interval = null;
-            console.log('🚀 ~ 7.1');
-            setProgress(0);
-            setState({
-              isReset: true,
-              isTimerOn: false,
-              isSettingsOpen: false,
-            });
-            setCurrentMode('pomodoro');
-          } else {
-            console.log('🚀 ~ 8');
-            scheduleRef.current.shift();
-            setCurrentMode(scheduleRef.current[0].mode);
-            setCurrentTimeEnd(scheduleRef.current[0]?.timeEnd || null);
-            setProgress(0);
-          }
-        }
-      }, 1000);
+      interval = setInterval(
+        () =>
+          circleProgressHandler({
+            progress,
+            fullProgress,
+            scheduleRef,
+            setProgress,
+            progressStep,
+            interval,
+            setState,
+            setCurrentMode,
+            setCurrentTimeEnd,
+          }),
+        1000,
+      );
       console.log('🚀 ~ 9');
     } else {
       console.log('🚀 ~ 10');
-      setState({
-        isReset: true,
-        isTimerOn: false,
-        isSettingsOpen: false,
-      });
+      setState(defaultState);
+      deviceStorage.setState(defaultState);
       if (interval) {
         console.log('🚀 ~ 11');
         clearInterval(interval);
         interval = null;
       }
     }
+    // App.addListener('appStateChange', ({ isActive }) => {
+    //   console.log('🚀 ~ isActive:', isActive);
+    //   if (isActive) {
+    //     scheduleRef.current = scheduleRef.current.filter(
+    //       (item) => item.timeEnd > Date.now(),
+    //     );
+    //     setCurrentMode(scheduleRef.current[0].mode);
+    //     setCurrentTimeEnd(scheduleRef.current[0]?.timeEnd || null);
+    //     if (scheduleRef.current.length === 0) {
+    //       setState(defaultState);
+    //       setProgress(0);
+    //       setCurrentMode('pomodoro');
+    //       setCurrentTimeEnd(null);
+    //     }
+    //   }
+    // });
+
     return () => clearInterval(interval as number);
   }, [
     state.isTimerOn,
@@ -112,11 +104,46 @@ export function ProgressCircle({
     setCurrentMode,
     isRepeatOn,
     setState,
-    durations,
+    // durations,
     fullProgress,
     setCurrentTimeEnd,
     scheduleRef,
   ]);
+
+  useEffect(() => {
+    App.addListener('appStateChange', ({ isActive }) => {
+      console.log('🚀 ~ appStateChange:', isActive);
+      console.log('🚀 ~ scheduleRef.current!!!!:', scheduleRef.current);
+      try {
+        if (isActive) {
+          console.log('🚀 ~ listener 1');
+          scheduleRef.current = scheduleRef.current?.filter(
+            (item) => item.timeEnd > Date.now(),
+          );
+          setCurrentMode(scheduleRef.current?.[0]?.mode || 'pomodoro');
+          setCurrentTimeEnd(scheduleRef.current?.[0]?.timeEnd || null);
+          if (
+            scheduleRef.current?.filter((item) => item.timeEnd > Date.now())
+              .length === 0
+          ) {
+            console.log('🚀 ~ listener 2');
+            console.log('🚀 ~ if (scheduleRef.current.length === 0) ');
+            setState(defaultState);
+            setProgress(0);
+            setCurrentMode('pomodoro');
+            setCurrentTimeEnd(null);
+          } else {
+            console.log('🚀 ~ listener 3');
+          }
+        } else {
+          console.log('🚀 ~ listener 4');
+        }
+        console.log('🚀 ~ listener 5');
+      } catch (error) {
+        console.log('🚀 ~ error:', error);
+      }
+    });
+  }, [scheduleRef, setCurrentMode, setCurrentTimeEnd, setState, setProgress]);
 
   const radius = 120;
   const circumference = 2 * Math.PI * radius;

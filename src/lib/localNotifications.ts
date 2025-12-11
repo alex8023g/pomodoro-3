@@ -28,7 +28,7 @@ export async function scheduleBasicNotification({
     const eventDate = new Date(item.timeEnd);
 
     return {
-      title: `Pomodoro ${i}`,
+      title: `Pomodoro`,
       body: item.mode === 'pomodoro' ? 'time to rest' : 'time to work',
       id: i + 1, // Unique identifier for the notification
       schedule: {

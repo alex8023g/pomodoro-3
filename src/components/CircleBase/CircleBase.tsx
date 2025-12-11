@@ -38,7 +38,6 @@ export function CircleBase({
       <ProgressCircle
         setState={setState}
         isRepeatOn={isRepeatOn}
-        durations={durations}
         state={state}
         progress={progress}
         setProgress={setProgress}
@@ -57,11 +56,6 @@ export function CircleBase({
             : currentMode === 'short_break'
               ? durations.short + ' min'
               : durations.long + ' min'}
-        {/* {currentMode === 'pomodoro'
-          ? durations.pom + ' min'
-          : currentMode === 'short_break'
-            ? durations.short + ' min'
-            : durations.long + ' min'} */}
       </div>
     </div>
   );
