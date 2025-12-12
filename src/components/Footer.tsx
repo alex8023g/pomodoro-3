@@ -25,7 +25,7 @@ export function Footer({
   setState,
   setProgress,
   setCurrentTimeEnd,
-  // currentMode,
+  currentMode,
   setCurrentMode,
   durations,
   isRepeatOn,
@@ -78,6 +78,7 @@ export function Footer({
                 const scheduleRes = createSchedule({
                   isRepeatOn: isRepeatOn,
                   durations: durations,
+                  currentMode: currentMode,
                 });
                 deviceStorage.setSchedule(scheduleRes);
                 scheduleRef.current = scheduleRes;
