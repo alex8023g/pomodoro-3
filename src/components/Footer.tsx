@@ -37,17 +37,18 @@ export function Footer({
         {/* Reset (home) button */}
         <button
           onClick={() => {
-            if (!state.isReset) {
-              setState({
-                isReset: true,
-                isTimerOn: false,
-                isSettingsOpen: false,
-              });
-              setProgress(0);
-              setCurrentTimeEnd(null);
-              setCurrentMode('pomodoro');
-              deviceStorage.setState(defaultState);
-            }
+            // if (!state.isReset) {
+            setState({
+              isReset: true,
+              isTimerOn: false,
+              isSettingsOpen: false,
+            });
+            setProgress(0);
+            setCurrentTimeEnd(null);
+            setCurrentMode('pomodoro');
+            deviceStorage.setState(defaultState);
+            deviceStorage.setSchedule([]);
+            // }
             cancelAllNotifications();
           }}
         >
