@@ -81,6 +81,7 @@ export function Footer({
                 });
                 deviceStorage.setSchedule(scheduleRes);
                 scheduleRef.current = scheduleRes;
+                setCurrentTimeEnd(scheduleRef.current[0]?.timeEnd || null);
                 console.log(
                   '🚀 ~ Footer ~ schedule:',
                   scheduleRes,
