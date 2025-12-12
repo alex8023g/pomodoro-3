@@ -10,7 +10,7 @@ type Props = {
 
 export function ModeNav({ currentMode, setCurrentMode, state }: Props) {
   return (
-    <div className='absolute right-0 bottom-10 left-0 flex items-center justify-between px-3 font-[aclonica]'>
+    <div className='absolute right-0 bottom-10 left-0 flex items-center justify-between px-3 font-[aclonica] sm:px-10'>
       <button
         onClick={() => {
           if (!state.isTimerOn) {
