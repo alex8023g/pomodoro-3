@@ -1,30 +1,49 @@
 import './App.css';
 import { CircleBase } from './components/CircleBase/CircleBase';
 import { Footer } from './components/Footer';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Header } from './components/Header';
 import { Settings } from './components/Settings/Settings';
 import { ModeNav } from './components/ModeNav';
 import { deviceStorage } from './storages/deviceStorage';
 import type { Durations, Mode, ScheduleItem } from './types/types';
-
-const isRepeatOnDevStorage = await deviceStorage.getIsRepeatOn();
-const durationsDevStorage = await deviceStorage.getDurations();
-const scheduleDevStorage = await deviceStorage.getSchedule();
-const stateDevStorage = await deviceStorage.getState();
+import { defaultDurations } from './constants';
 
 function App() {
   const [currentMode, setCurrentMode] = useState<Mode>(
-    scheduleDevStorage[0]?.mode || 'pomodoro',
+    'pomodoro',
   );
   const [currentTimeEnd, setCurrentTimeEnd] = useState<number | null>(
-    scheduleDevStorage[0]?.timeEnd || null,
+    null,
   );
-  const [isRepeatOn, setIsRepeatOn] = useState<boolean>(isRepeatOnDevStorage);
+  const [isRepeatOn, setIsRepeatOn] = useState<boolean>(true);
   const [progress, setProgress] = useState(0);
-  const [durations, setDurations] = useState<Durations>(durationsDevStorage);
-  const [state, setState] = useState(stateDevStorage);
-  const scheduleRef = useRef<ScheduleItem[]>(scheduleDevStorage);
+  const [durations, setDurations] = useState<Durations>(defaultDurations);
+  const [state, setState] = useState({
+    isSettingsOpen: false,
+    isTimerOn: false,
+    isReset: true,
+  });
+  const scheduleRef = useRef<ScheduleItem[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      deviceStorage.getIsRepeatOn().then((res) => {
+        setIsRepeatOn(res);
+      });
+      deviceStorage.getDurations().then((res) => {
+        setDurations(res);
+      });
+      deviceStorage.getSchedule().then((res) => {
+        setCurrentMode(res[0]?.mode || 'pomodoro');
+        setCurrentTimeEnd(res[0]?.timeEnd || null);
+        scheduleRef.current = res;
+      });
+      deviceStorage.getState().then((res) => {
+        setState(res);
+      });
+    })();
+  }, []);
 
   return (
     <div className='flex h-dvh flex-col justify-between bg-[#50a6d9] bg-[url(/root_bg.png)] bg-cover bg-center'>
