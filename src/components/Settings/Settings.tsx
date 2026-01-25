@@ -16,6 +16,9 @@ type Props = {
   >;
 };
 
+const isDev = import.meta.env.DEV;
+console.log("🚀 ~ isDev:", isDev)
+
 export function Settings({ state, setState, durations, setDurations }: Props) {
   return (
     <div className='mx-auto mb-[43.5px] font-[aclonica]'>
@@ -33,8 +36,7 @@ export function Settings({ state, setState, durations, setDurations }: Props) {
               <div className={styles.settingName}>pomodoro</div>
               <div className='w-1/2 text-center'>
                 <SelectDuration
-                  values={[25, 30, 35, 40, 45]}
-                  // values={[25, 30, 35, 40, 45, 0.5, 1, 1.5]}
+                  values={isDev ? [25, 30, 35, 40, 45, 0.2, 1, 1.5] : [25, 30, 35, 40, 45]}
                   duration={durations.pom}
                   setDuration={setDurations}
                   durationsKey='pom'
@@ -45,8 +47,7 @@ export function Settings({ state, setState, durations, setDurations }: Props) {
               <div className={styles.settingName}>break short</div>
               <div className='w-1/2 text-center'>
                 <SelectDuration
-                  values={[5, 10, 15]}
-                  // values={[5, 10, 15, 0.5, 1, 1.5]}
+                  values={isDev ? [5, 10, 15, 0.2, 1, 1.5] : [5, 10, 15]}
                   duration={durations.short}
                   setDuration={setDurations}
                   durationsKey='short'
@@ -57,8 +58,7 @@ export function Settings({ state, setState, durations, setDurations }: Props) {
               <div className={styles.settingName}>break long</div>
               <div className='w-1/2 text-center'>
                 <SelectDuration
-                  values={[15, 20, 25, 30]}
-                  // values={[15, 20, 25, 30, 0.5, 1, 1.5]}
+                  values={isDev ? [15, 20, 25, 30, 0.2, 1, 1.5] : [15, 20, 25, 30]}
                   duration={durations.long}
                   setDuration={setDurations}
                   durationsKey='long'

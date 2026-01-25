@@ -4,16 +4,6 @@ import {
 } from '@capacitor/local-notifications';
 import type { ScheduleItem } from '../types/types';
 
-// 1. Request notification permissions (iOS will prompt the user on the first call)
-export async function requestNotificationPermissions() {
-  const status = await LocalNotifications.requestPermissions();
-  if (status.display === 'granted') {
-    console.log('Notification permissions granted');
-  } else {
-    console.log('Notification permissions denied');
-  }
-}
-
 // 2. Schedule a local notification to fire in 5 seconds
 export async function scheduleBasicNotification({
   schedule,
@@ -47,17 +37,6 @@ export async function scheduleBasicNotification({
   await LocalNotifications.schedule(options);
   console.log('Notification scheduled');
 }
-
-// 3. Add a listener for when a user interacts with a notification
-LocalNotifications.addListener(
-  'localNotificationActionPerformed',
-  (notificationAction) => {
-    console.log(
-      `Notification action performed: ${notificationAction.actionId}`,
-    );
-    console.log('Notification details:', notificationAction.notification);
-  },
-);
 
 // 4. Cancel all notifications
 export async function cancelAllNotifications() {

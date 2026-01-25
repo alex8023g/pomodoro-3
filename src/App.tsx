@@ -8,6 +8,7 @@ import { ModeNav } from './components/ModeNav';
 import { deviceStorage } from './storages/deviceStorage';
 import type { Durations, Mode, ScheduleItem } from './types/types';
 import { defaultDurations } from './constants';
+import { LocalNotifications } from '@capacitor/local-notifications';
 
 function App() {
   const [currentMode, setCurrentMode] = useState<Mode>(
@@ -27,6 +28,31 @@ function App() {
   const scheduleRef = useRef<ScheduleItem[]>([]);
 
   useEffect(() => {
+    (async () => {
+      // request permissions for local notifications
+      const status = await LocalNotifications.requestPermissions();
+      if (status.display === 'granted') {
+        console.log('Notification permissions granted');
+      } else {
+        console.log('Notification permissions denied');
+      }
+    })();
+    // add listener for local notification received. When the notification is received, play the sound.
+    LocalNotifications.addListener('localNotificationReceived', (notification) => {
+      console.log("🚀 ~ LNSetScheduleBtn ~ notification:", notification)
+      const sound = notification.sound;
+      if (sound) {
+        const audio = new Audio('/new-notification.mp3');
+        audio.play();
+      }
+    })
+    return () => {
+      LocalNotifications.removeAllListeners()
+    }
+  }, []);
+
+  useEffect(() => {
+    // Load the state from the storage
     (async () => {
       deviceStorage.getIsRepeatOn().then((res) => {
         setIsRepeatOn(res);
