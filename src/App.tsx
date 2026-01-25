@@ -29,7 +29,7 @@ function App() {
   return (
     <div className='flex h-dvh flex-col justify-between bg-[#50a6d9] bg-[url(/root_bg.png)] bg-cover bg-center'>
       <Header isRepeatOn={isRepeatOn} setIsRepeatOn={setIsRepeatOn} />
-      <div className='relative flex h-full flex-col items-center justify-center text-3xl font-bold'>
+      <main className='relative flex h-full flex-col items-center justify-center text-3xl font-bold'>
         {state.isSettingsOpen && (
           <Settings
             state={state}
@@ -51,8 +51,14 @@ function App() {
           currentTimeEnd={currentTimeEnd}
           setCurrentTimeEnd={setCurrentTimeEnd}
         />
-        {!state.isSettingsOpen && <ModeNav currentMode={currentMode} />}
-      </div>
+        {!state.isSettingsOpen && (
+          <ModeNav
+            currentMode={currentMode}
+            setCurrentMode={setCurrentMode}
+            state={state}
+          />
+        )}
+      </main>
       <Footer
         state={state}
         setState={setState}

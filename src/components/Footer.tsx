@@ -25,29 +25,30 @@ export function Footer({
   setState,
   setProgress,
   setCurrentTimeEnd,
-  // currentMode,
+  currentMode,
   setCurrentMode,
   durations,
   isRepeatOn,
   scheduleRef,
 }: Props) {
   return (
-    <footer className='/border flex h-30 items-center justify-center bg-[url(/footer_frame.png)] bg-cover bg-center'>
+    <footer className='/border flex h-30 items-center justify-center bg-[url(/footer_frame.png)] bg-cover bg-center sm:bg-none'>
       <div className='relative flex w-full items-center justify-between px-10'>
         {/* Reset (home) button */}
         <button
           onClick={() => {
-            if (!state.isReset) {
-              setState({
-                isReset: true,
-                isTimerOn: false,
-                isSettingsOpen: false,
-              });
-              setProgress(0);
-              setCurrentTimeEnd(null);
-              setCurrentMode('pomodoro');
-              deviceStorage.setState(defaultState);
-            }
+            // if (!state.isReset) {
+            setState({
+              isReset: true,
+              isTimerOn: false,
+              isSettingsOpen: false,
+            });
+            setProgress(0);
+            setCurrentTimeEnd(null);
+            setCurrentMode('pomodoro');
+            deviceStorage.setState(defaultState);
+            deviceStorage.setSchedule([]);
+            // }
             cancelAllNotifications();
           }}
         >
@@ -61,7 +62,7 @@ export function Footer({
         </button>
         {/* TimerOn button */}
         <button
-          className='relative bottom-10 -left-1.5'
+          className='relative bottom-10 -left-1.5 sm:bottom-5'
           onClick={() => {
             if (!state.isTimerOn) {
               setState({
@@ -78,9 +79,11 @@ export function Footer({
                 const scheduleRes = createSchedule({
                   isRepeatOn: isRepeatOn,
                   durations: durations,
+                  currentMode: currentMode,
                 });
                 deviceStorage.setSchedule(scheduleRes);
                 scheduleRef.current = scheduleRes;
+                setCurrentTimeEnd(scheduleRef.current[0]?.timeEnd || null);
                 console.log(
                   '🚀 ~ Footer ~ schedule:',
                   scheduleRes,

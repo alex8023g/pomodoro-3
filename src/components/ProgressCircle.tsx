@@ -78,22 +78,6 @@ export function ProgressCircle({
         interval = null;
       }
     }
-    // App.addListener('appStateChange', ({ isActive }) => {
-    //   console.log('🚀 ~ isActive:', isActive);
-    //   if (isActive) {
-    //     scheduleRef.current = scheduleRef.current.filter(
-    //       (item) => item.timeEnd > Date.now(),
-    //     );
-    //     setCurrentMode(scheduleRef.current[0].mode);
-    //     setCurrentTimeEnd(scheduleRef.current[0]?.timeEnd || null);
-    //     if (scheduleRef.current.length === 0) {
-    //       setState(defaultState);
-    //       setProgress(0);
-    //       setCurrentMode('pomodoro');
-    //       setCurrentTimeEnd(null);
-    //     }
-    //   }
-    // });
 
     return () => clearInterval(interval as number);
   }, [
@@ -104,7 +88,6 @@ export function ProgressCircle({
     setCurrentMode,
     isRepeatOn,
     setState,
-    // durations,
     fullProgress,
     setCurrentTimeEnd,
     scheduleRef,
