@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">pomodoro-3</string>
+    <string name="title_activity_main">pomodoro-3</string>
+    <string name="package_name">io.grachev.pomodoro3</string>
+    <string name="custom_url_scheme">io.grachev.pomodoro3</string>
+</resources>
