@@ -9,6 +9,7 @@ import { deviceStorage } from './storages/deviceStorage';
 import type { Durations, Mode, ScheduleItem } from './types/types';
 import { defaultDurations } from './constants';
 import { LocalNotifications } from '@capacitor/local-notifications';
+import { YMInitializer } from 'react-yandex-metrika';
 
 function App() {
   const [currentMode, setCurrentMode] = useState<Mode>(
@@ -73,6 +74,7 @@ function App() {
 
   return (
     <div className='flex h-dvh flex-col justify-between bg-[#50a6d9] bg-[url(/root_bg.png)] bg-cover bg-center'>
+      <YMInitializer accounts={[Number(import.meta.env.VITE_YANDEX_METRIKA_ID)]} />
       <Header isRepeatOn={isRepeatOn} setIsRepeatOn={setIsRepeatOn} />
       <main className='relative flex h-full flex-col items-center justify-center text-3xl font-bold'>
         {state.isSettingsOpen && (
