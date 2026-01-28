@@ -33,7 +33,7 @@ export function Settings({ state, setState, durations, setDurations }: Props) {
               <div className={styles.settingName}>pomodoro</div>
               <div className='w-1/2 text-center'>
                 <SelectDuration
-                  values={[25, 30, 35, 40, 45]}
+                  values={[0.5, 25, 30, 35, 40, 45]}
                   // values={[25, 30, 35, 40, 45, 0.5, 1, 1.5]}
                   duration={durations.pom}
                   setDuration={setDurations}
@@ -45,7 +45,7 @@ export function Settings({ state, setState, durations, setDurations }: Props) {
               <div className={styles.settingName}>break short</div>
               <div className='w-1/2 text-center'>
                 <SelectDuration
-                  values={[5, 10, 15]}
+                  values={[0.5, 5, 10, 15]}
                   // values={[5, 10, 15, 0.5, 1, 1.5]}
                   duration={durations.short}
                   setDuration={setDurations}
@@ -57,7 +57,7 @@ export function Settings({ state, setState, durations, setDurations }: Props) {
               <div className={styles.settingName}>break long</div>
               <div className='w-1/2 text-center'>
                 <SelectDuration
-                  values={[15, 20, 25, 30]}
+                  values={[0.5, 15, 20, 25, 30]}
                   // values={[15, 20, 25, 30, 0.5, 1, 1.5]}
                   duration={durations.long}
                   setDuration={setDurations}

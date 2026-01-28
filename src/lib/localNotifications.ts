@@ -35,6 +35,7 @@ export async function scheduleBasicNotification({
         at: eventDate,
       },
       sound: 'beep.wav',
+      allowWhileIdle: true,
     };
   });
 
