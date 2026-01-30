@@ -26,9 +26,12 @@ function App() {
   const scheduleRef = useRef<ScheduleItem[]>([]);
 
   useEffect(() => {
+    console.log('🚀 ~ useEffect App-1');
     (async () => {
       // request permissions for local notifications
+      console.log('🚀 ~ useEffect App-2');
       const status = await LocalNotifications.requestPermissions();
+      console.log('🚀 ~ useEffect App-3');
       if (status.display === 'granted') {
         console.log('Notification permissions granted');
       } else {
@@ -50,7 +53,9 @@ function App() {
           { duration: Infinity },
         );
       }
+      console.log('🚀 ~ useEffect App-4');
     })();
+    console.log('🚀 ~ useEffect App-5');
     // add listener for local notification received. When the notification is received, play the sound.
     LocalNotifications.addListener(
       'localNotificationReceived',
