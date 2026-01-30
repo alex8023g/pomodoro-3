@@ -38,7 +38,7 @@ function App() {
             Браузерные уведомления отключены.
             <div>
               <a
-                href='https://emilkowal.ski/'
+                href='https://ya.ru/search/?text=как+включить+браузерные+уведомления&lr=239&search_source=yaru_desktop_common&search_domain=yaru'
                 target='_blank'
                 rel='noopener noreferrer'
                 className='underline'
