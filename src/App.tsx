@@ -10,7 +10,7 @@ import type { Durations, Mode, ScheduleItem } from './types/types';
 import { defaultDurations } from './constants';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { Layout } from './components/Layout';
-// import { YMInitializer } from 'react-yandex-metrika';
+import { toast, Toaster } from 'sonner';
 
 function App() {
   const [currentMode, setCurrentMode] = useState<Mode>('pomodoro');
@@ -33,6 +33,22 @@ function App() {
         console.log('Notification permissions granted');
       } else {
         console.log('Notification permissions denied');
+        toast(
+          <div>
+            Браузерные уведомления отключены.
+            <div>
+              <a
+                href='https://emilkowal.ski/'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='underline'
+              >
+                Как включить?
+              </a>
+            </div>
+          </div>,
+          { duration: Infinity },
+        );
       }
     })();
     // add listener for local notification received. When the notification is received, play the sound.
@@ -40,6 +56,7 @@ function App() {
       'localNotificationReceived',
       (notification) => {
         console.log('🚀 ~ LNSetScheduleBtn ~ notification:', notification);
+        toast.info(notification.body);
         const sound = notification.sound;
         if (sound) {
           const audio = new Audio('/new-notification.mp3');
@@ -119,6 +136,7 @@ function App() {
         isRepeatOn={isRepeatOn}
         scheduleRef={scheduleRef}
       />
+      <Toaster richColors position='bottom-right' closeButton />
     </div>
   );
 }

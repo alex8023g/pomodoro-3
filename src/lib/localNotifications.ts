@@ -19,7 +19,7 @@ export async function scheduleBasicNotification({
 
     return {
       title: `Pomodoro`,
-      body: item.mode === 'pomodoro' ? 'time to rest' : 'time to work',
+      body: item.mode === 'pomodoro' ? 'пора отдохнуть' : 'пора работать',
       id: i + 1, // Unique identifier for the notification
       schedule: {
         at: eventDate,
