@@ -7,6 +7,7 @@ import {
   cancelAllNotifications,
   scheduleBasicNotification,
 } from '../lib/localNotifications';
+import { Layout } from './Layout';
 
 type Props = {
   state: State;
@@ -32,103 +33,105 @@ export function Footer({
   scheduleRef,
 }: Props) {
   return (
-    <footer className='/border flex h-30 items-center justify-center bg-[url(/footer_frame.png)] bg-cover bg-center sm:bg-none'>
-      <div className='relative flex w-full items-center justify-between px-10'>
-        {/* Reset (home) button */}
-        <button
-          onClick={() => {
-            // if (!state.isReset) {
-            setState({
-              isReset: true,
-              isTimerOn: false,
-              isSettingsOpen: false,
-            });
-            setProgress(0);
-            setCurrentTimeEnd(null);
-            setCurrentMode('pomodoro');
-            deviceStorage.setState(defaultState);
-            deviceStorage.setSchedule([]);
-            // }
-            cancelAllNotifications();
-          }}
-        >
-          <div className='/border'>
-            {state.isReset ? (
-              <img src='/iconamoon_home-bold.png' alt='pause button' />
-            ) : (
-              <img src='/home_off_btn.png' alt='pause button' />
-            )}
-          </div>
-        </button>
-        {/* TimerOn button */}
-        <button
-          className='relative bottom-10 -left-1.5 sm:bottom-5'
-          onClick={() => {
-            if (!state.isTimerOn) {
+    <footer className='/flex h-30 items-center justify-center bg-[url(/footer_frame.png)] bg-cover bg-center sm:bg-none'>
+      <Layout>
+        <div className='relative flex w-full items-center justify-between px-10'>
+          {/* Reset (home) button */}
+          <button
+            onClick={() => {
+              // if (!state.isReset) {
               setState({
-                isReset: false,
-                isTimerOn: true,
+                isReset: true,
+                isTimerOn: false,
                 isSettingsOpen: false,
               });
-              deviceStorage.setState({
-                isReset: false,
-                isTimerOn: true,
-                isSettingsOpen: false,
-              });
-              if (state.isReset) {
-                const scheduleRes = createSchedule({
-                  isRepeatOn: isRepeatOn,
-                  durations: durations,
-                  currentMode: currentMode,
+              setProgress(0);
+              setCurrentTimeEnd(null);
+              setCurrentMode('pomodoro');
+              deviceStorage.setState(defaultState);
+              deviceStorage.setSchedule([]);
+              // }
+              cancelAllNotifications();
+            }}
+          >
+            <div className='/border'>
+              {state.isReset ? (
+                <img src='/iconamoon_home-bold.png' alt='pause button' />
+              ) : (
+                <img src='/home_off_btn.png' alt='pause button' />
+              )}
+            </div>
+          </button>
+          {/* TimerOn button */}
+          <button
+            className='relative bottom-10 -left-1.5 sm:bottom-5'
+            onClick={() => {
+              if (!state.isTimerOn) {
+                setState({
+                  isReset: false,
+                  isTimerOn: true,
+                  isSettingsOpen: false,
                 });
-                deviceStorage.setSchedule(scheduleRes);
-                scheduleRef.current = scheduleRes;
-                setCurrentTimeEnd(scheduleRef.current[0]?.timeEnd || null);
-                console.log(
-                  '🚀 ~ Footer ~ schedule:',
-                  scheduleRes,
-                  scheduleRes.map((item) => ({
-                    timeEnd: new Date(item.timeEnd).toISOString(),
-                    mode: item.mode,
-                  })),
-                );
+                deviceStorage.setState({
+                  isReset: false,
+                  isTimerOn: true,
+                  isSettingsOpen: false,
+                });
+                if (state.isReset) {
+                  const scheduleRes = createSchedule({
+                    isRepeatOn: isRepeatOn,
+                    durations: durations,
+                    currentMode: currentMode,
+                  });
+                  deviceStorage.setSchedule(scheduleRes);
+                  scheduleRef.current = scheduleRes;
+                  setCurrentTimeEnd(scheduleRef.current[0]?.timeEnd || null);
+                  console.log(
+                    '🚀 ~ Footer ~ schedule:',
+                    scheduleRes,
+                    scheduleRes.map((item) => ({
+                      timeEnd: new Date(item.timeEnd).toISOString(),
+                      mode: item.mode,
+                    })),
+                  );
 
-                scheduleBasicNotification({
-                  schedule: scheduleRes,
+                  scheduleBasicNotification({
+                    schedule: scheduleRes,
+                  });
+                }
+              }
+            }}
+          >
+            {state.isTimerOn ? (
+              <img src='/timer_on_btn.png' alt='play button' />
+            ) : (
+              <img src='/timer_off_btn.png' alt='play button' />
+            )}
+          </button>
+          {/* Settings button */}
+          <button
+            onClick={() => {
+              if (!state.isSettingsOpen) {
+                setState({
+                  ...state,
+                  isSettingsOpen: true,
+                });
+              } else {
+                setState({
+                  ...state,
+                  isSettingsOpen: false,
                 });
               }
-            }
-          }}
-        >
-          {state.isTimerOn ? (
-            <img src='/timer_on_btn.png' alt='play button' />
-          ) : (
-            <img src='/timer_off_btn.png' alt='play button' />
-          )}
-        </button>
-        {/* Settings button */}
-        <button
-          onClick={() => {
-            if (!state.isSettingsOpen) {
-              setState({
-                ...state,
-                isSettingsOpen: true,
-              });
-            } else {
-              setState({
-                ...state,
-                isSettingsOpen: false,
-              });
-            }
-          }}
-        >
-          {state.isSettingsOpen ? (
-            <img src='/settings_btn_active.png' alt='play button' />
-          ) : (
-            <img src='/settings_btn.png' alt='play button' />
-          )}
-        </button>
-      </div>
+            }}
+          >
+            {state.isSettingsOpen ? (
+              <img src='/settings_btn_active.png' alt='play button' />
+            ) : (
+              <img src='/settings_btn.png' alt='play button' />
+            )}
+          </button>
+        </div>
+      </Layout>
     </footer>
   );
 }

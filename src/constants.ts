@@ -1,7 +1,7 @@
 export const defaultDurations = {
-  pom: 25,
-  short: 5,
-  long: 15,
+  pom: 0.5,
+  short: 0.5,
+  long: 0.5,
 };
 
 export const defaultState = {
